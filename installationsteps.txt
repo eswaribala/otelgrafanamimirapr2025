@@ -76,4 +76,18 @@ kubectl expose deployment --port 3000 my-grafana -n grafana --type=LoadBalancer 
 kubectl get secret --namespace grafana my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 #open browser to access grafana
 http://localhost:3000
+#telegraf installation
+helm repo add influxdata https://helm.influxdata.com
+helm repo update
+helm install telegraf influxdata/telegraf
+#create the new folder
+helm show values influxdata/telegraf > values.yaml
+#add output as Prometheus client
+helm upgrade telegraf influxdata/telegraf  -f values.yaml
+kubectl port-forward svc/telegraf 9273:9273
+http://localhost:9273/metrics
+
+
+
+
 
