@@ -1,0 +1,12 @@
+Step 1
+Download helm
+Go to
+https://github.com/helm/helm/releases
+download the file 
+Windows amd64 (hyperlink)
+
+#set env variable
+
+#Check helm version
+
+helm version
