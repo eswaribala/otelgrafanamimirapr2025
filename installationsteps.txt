@@ -94,7 +94,16 @@ helm install telegraf influxdata/telegraf -n telegraf
 #create the new folder
 helm show values influxdata/telegraf > values.yaml
 #add output as Prometheus client
-helm upgrade telegraf influxdata/telegraf  -f values.yaml
+outputs:
+    - influxdb:
+        urls:
+          - "http://influxdb.monitoring.svc:8086"
+        database: "telegraf"
+
+    - prometheus_client:
+        listen: ":9273"
+        path: "/metrics"
+helm upgrade telegraf -n telegraf influxdata/telegraf  -f values.yaml
 kubectl port-forward svc/telegraf 9273:9273
 http://localhost:9273/metrics
 
