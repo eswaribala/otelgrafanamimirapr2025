@@ -107,7 +107,16 @@ helm upgrade telegraf -n telegraf influxdata/telegraf  -f values.yaml
 kubectl port-forward svc/telegraf -n telegraf 9273:9273
 http://localhost:9273/metrics
 
+#integrate telegraf and prometheus server add telegraf as target to prometheus
+#open new folder for prom configuration
 
+helm show values prometheus-community/prometheus > values.yaml
 
+#Add the telegraf job to prometheus.yml inside values.yaml
+- job_name: 'telegraf'
+        metrics_path: '/metrics'
+        static_configs:
+          - targets: ['host.docker.internal:9273']
 
+helm upgrade prometheus prometheus-community/prometheus -f values.yaml -n prometheus
 
