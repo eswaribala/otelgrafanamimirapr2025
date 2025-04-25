@@ -104,7 +104,7 @@ outputs:
         listen: ":9273"
         path: "/metrics"
 helm upgrade telegraf -n telegraf influxdata/telegraf  -f values.yaml
-kubectl port-forward svc/telegraf 9273:9273
+kubectl port-forward svc/telegraf -n telegraf 9273:9273
 http://localhost:9273/metrics
 
 
