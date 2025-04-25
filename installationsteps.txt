@@ -76,6 +76,9 @@ kubectl expose deployment --port 3000 my-grafana -n grafana --type=LoadBalancer 
 kubectl get secret --namespace grafana my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 #open browser to access grafana
 http://localhost:3000
+#modify grafna
+helm show values grafana/grafana > values.yaml
+
 #telegraf installation
 helm repo add influxdata https://helm.influxdata.com
 helm repo update
