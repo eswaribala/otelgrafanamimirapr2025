@@ -79,6 +79,11 @@ http://localhost:3000
 #telegraf installation
 helm repo add influxdata https://helm.influxdata.com
 helm repo update
+#install influxdb
+kubectl create ns influxdbns
+helm install influxdb influxdata/influxdb2 --set adminuser.enabled=true --set adminuser.user=admin --set adminuser.password=admin123 --set adminuser.org=rps --set adminuser.bucket=training --set adminuser.token=mysecret -n influxdbns
+
+
 kubectl create ns telegraf
 helm install telegraf influxdata/telegraf -n telegraf
 #create the new folder
