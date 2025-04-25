@@ -63,3 +63,16 @@ http://localhost:9091
 http://localhost:9100
 #alert manager
 http://localhost:9093
+
+#grafana installation
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm install my-grafana grafana/grafana
+kubectl get pods,svc
+#expose grafana as service in localhost
+kubectl expose deployment --port 3000 my-grafana --type=LoadBalancer --name=grafanaservice
+#use bash script
+kubectl get secret --namespace default my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+#open browser to access grafana
+http://localhost:3000
+
