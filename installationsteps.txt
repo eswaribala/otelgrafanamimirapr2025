@@ -83,12 +83,12 @@ helm repo update
 kubectl create ns influxdbns
 helm install influxdb influxdata/influxdb2 --set adminuser.enabled=true --set adminuser.user=admin --set adminuser.password=admin123 --set adminuser.org=rps --set adminuser.bucket=training --set adminuser.token=mysecret -n influxdbns
 #expose to port no 8086
+kubectl port-forward -n influxdbns svc/influxdb-influxdb2 8086:80
 #get the password using bashscript
 kubectl get secret influxdb-influxdb2-auth -o "jsonpath={.data['admin-password']}" --namespace influxdbns | base64 --decode
 #access db from 
 http://localhost:8086
-kubectl port-forward -n influxdbns svc/influxdb-influxdb2 8086:80
-kubectl get secret influxdb-influxdb2-auth -o "jsonpath={.data['admin-password']}" --namespace influxdbns | base64 --decode
+
 kubectl create ns telegraf
 helm install telegraf influxdata/telegraf -n telegraf
 #create the new folder
