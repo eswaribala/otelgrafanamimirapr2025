@@ -79,7 +79,8 @@ http://localhost:3000
 #telegraf installation
 helm repo add influxdata https://helm.influxdata.com
 helm repo update
-helm install telegraf influxdata/telegraf
+kubectl create ns telegraf
+helm install telegraf influxdata/telegraf -n telegraf
 #create the new folder
 helm show values influxdata/telegraf > values.yaml
 #add output as Prometheus client
