@@ -78,7 +78,7 @@ kubectl get secret --namespace grafana my-grafana -o jsonpath="{.data.admin-pass
 http://localhost:3000
 #modify grafna
 helm show values grafana/grafana > values.yaml
-
+helm upgrade my-grafana grafana/grafana -f values.yaml -n grafana
 #telegraf installation
 helm repo add influxdata https://helm.influxdata.com
 helm repo update
