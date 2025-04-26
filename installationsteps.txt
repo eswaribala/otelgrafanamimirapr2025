@@ -89,8 +89,15 @@ helm install influxdb influxdata/influxdb2 --set adminuser.enabled=true --set ad
 kubectl port-forward -n influxdbns svc/influxdb-influxdb2 8086:80
 #get the password using bashscript
 kubectl get secret influxdb-influxdb2-auth -o "jsonpath={.data['admin-password']}" --namespace influxdbns | base64 --decode
-#access db from 
+#access db from browser
 http://localhost:8086
+
+#to find out dns name
+kubectl run -i --tty dns-test --image=busybox --restart=Never -- sh
+wget -qO- http://influxdb-influxdb2.default.svc.cluster.local:80/health
+#result should be 
+{"name":"influxdb", "message":"ready for queries and writes", "status":"pass", "checks":[], "version": "v2.7.4", "commit": "19e5c0e1b7"}
+
 
 kubectl create ns telegraf
 helm install telegraf influxdata/telegraf -n telegraf
