@@ -320,4 +320,13 @@ ports:
 helm upgrade my-otel-collector -f values.yaml open-telemetry/opentelemetry-collector --set image.repository=otel/opentelemetry-collector-contrib --set image.tag=latest --set mode=deployment
 kubectl port-forward svc/my-otel-collector-opentelemetry-collector 4317:4317 4318:4318 8889:8889
 
+#install jaeger for call tracing
+#download jaegerkube.zip file and extract it
+#go to folder level
+kubectl apply -f jaeger-all-in-one.yaml
+kubectl get pods
+kubectl get svc jaeger
+kubectl port-forward service/jaeger 16686:16686
+http://localhost:16686
+
 
