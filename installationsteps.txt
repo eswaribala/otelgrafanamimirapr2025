@@ -173,4 +173,28 @@ helm show values prometheus-community/prometheus > values.yaml
           - targets: ['host.docker.internal:9273']
 
 helm upgrade prometheus prometheus-community/prometheus -f values.yaml -n prometheus
+#creating open telemetry
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo update
+helm install my-otel-collector open-telemetry/opentelemetry-collector --set image.repository=otel/opentelemetry-collector-contrib --set image.tag=latest --set mode=deployment
+#create otlp foloder and download
+helm show values open-telemetry/opentelemetry-collector > values.yaml
+
+modify values.yaml
+config:
+  exporters:
+    logging:
+      loglevel: debug
+    prometheus:
+      endpoint: "0.0.0.0:8889"
+service:
+    pipelines:
+      metrics:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [logging, prometheus]
+
+helm upgrade my-otel-collector -f values.yaml open-telemetry/opentelemetry-collector --set image.repository=otel/opentelemetry-collector-contrib --set image.tag=latest --set mode=deployment
+kubectl port-forward svc/my-otel-collector-opentelemetry-collector 4318:4318 8889:8889
+
 
