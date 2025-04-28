@@ -110,14 +110,42 @@ helm install telegraf influxdata/telegraf -n telegraf
 helm show values influxdata/telegraf > values.yaml
 #add output as Prometheus client
 outputs:
-    - influxdb:
-        urls:
-          - "http://influxdb.monitoring.svc:8086"
-        database: "telegraf"
-
+    - influxdb_v2:
+        urls: ["http://influxdb-influxdb2.default.svc.cluster.local:80"]
+        token: "g43keiCtnRMWYLR0SFIEZwgwEq2hW4-i8FwS7ksplhP7G2pGgJ3Ej-QdyQepxysw4S42mLNOa_xcdhmMc-YV_g=="
+        organization: "rps"
+        bucket: "training"
     - prometheus_client:
         listen: ":9273"
-        path: "/metrics"
+        path: "/metrics" 
+  inputs:
+    - statsd:
+        service_address: ":8125"
+        percentiles:
+          - 50
+          - 95
+          - 99
+        metric_separator: "_"
+        allowed_pending_messages: 10000
+        percentile_limit: 1000
+    - cpu:
+        percpu: true
+        totalcpu: true
+        collect_cpu_time: false
+        report_active: false
+
+    - mem: {}
+
+    - disk:
+        ignore_fs:
+          - tmpfs
+          - devtmpfs
+          - devfs
+
+    - diskio: {}
+
+    - system: {}
+
 helm upgrade telegraf -n telegraf influxdata/telegraf  -f values.yaml
 kubectl port-forward svc/telegraf -n telegraf 9273:9273
 http://localhost:9273/metrics
