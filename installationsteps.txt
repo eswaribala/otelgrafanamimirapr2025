@@ -329,4 +329,21 @@ kubectl get svc jaeger
 kubectl port-forward service/jaeger 16686:16686
 http://localhost:16686
 
+#install mimir and minio
+#download mimir values.yaml and store it in mimir configuration folder
+helm install mimir grafana/mimir-distributed -f values.yaml
+#use bash script
+kubectl get secret mimir-minio -o jsonpath="{.data.rootUser}" | base64 --decode
+grafana-user
+kubectl get secret mimir-minio -o jsonpath="{.data.rootPassword}" | base64 --decode
+supersecret
+#use command prompt
+kubectl port-forward svc/mimir-minio-console 9001:9001
+kubectl port-forward svc/mimir-minio 9000:9000
+
+kubectl port-forward svc/mimir-distributed-nginx 9009:80
+curl http://localhost:9009/prometheus/api/v1/status/buildinfo
+kubectl port-forward svc/mimir-distributed-query-frontend 9010:8080
+helm get values mimir-distributed
+
 
