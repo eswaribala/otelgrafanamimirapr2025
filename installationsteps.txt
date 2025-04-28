@@ -111,7 +111,7 @@ helm show values influxdata/telegraf > values.yaml
 #add output as Prometheus client
 outputs:
     - influxdb_v2:
-        urls: ["http://influxdb-influxdb2.default.svc.cluster.local:80"]
+        urls: ["http://influxdb-influxdb2.default.svc.cluster.local:80"]  #use influx db dns name
         token: "g43keiCtnRMWYLR0SFIEZwgwEq2hW4-i8FwS7ksplhP7G2pGgJ3Ej-QdyQepxysw4S42mLNOa_xcdhmMc-YV_g=="
         organization: "rps"
         bucket: "training"
