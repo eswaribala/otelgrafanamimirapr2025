@@ -93,6 +93,9 @@ kubectl get secret influxdb-influxdb2-auth -o "jsonpath={.data['admin-password']
 http://localhost:8086
 
 #to find out dns name
+kubectl exec -it <podname> -n <namespace> -- /bin/sh
+#nslookup influxdb-influxdb2
+
 kubectl run -i --tty dns-test --image=busybox --restart=Never -- sh
 wget -qO- http://influxdb-influxdb2.default.svc.cluster.local:80/health
 #result should be 
