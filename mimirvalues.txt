@@ -1,0 +1,31 @@
+mimir:
+  mode: blocks
+
+common:
+  storage:
+    backend: s3
+    s3:
+      endpoint: minio.default.svc.cluster.local:9000
+      access_key_id: minioadmin
+      secret_access_key: minioadmin
+      insecure: true
+      bucket_name: blocks
+
+alertmanager:
+  storage:
+    s3:
+      bucket_name: alertmanager
+
+ruler:
+  storage:
+    s3:
+      bucket_name: ruler
+
+usageStats:
+  enabled: false
+
+gateway:
+  enabled: true
+
+minio:
+  enabled: true
