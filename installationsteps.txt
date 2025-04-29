@@ -408,4 +408,6 @@ kubectl patch -n prometheus ds prometheus-prometheus-node-exporter --type "json"
 http://host.docker.internal:9009/prometheus
 https://hooks.slack.com/services/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
  https://hooks.slack.com/services/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
+https://hooks.slack.com/services/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
+ 
  
