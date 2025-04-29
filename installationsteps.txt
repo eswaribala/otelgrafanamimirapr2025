@@ -344,7 +344,7 @@ http://localhost:16686
 helm install mimir grafana/mimir-distributed -f values.yaml
 #use bash script
 kubectl get secret mimir-minio -o jsonpath="{.data.rootUser}" | base64 --decode
-grafana-user
+grafana-mimir
 kubectl get secret mimir-minio -o jsonpath="{.data.rootPassword}" | base64 --decode
 supersecret
 #use command prompt
