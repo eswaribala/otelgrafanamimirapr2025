@@ -1,0 +1,132 @@
+rbac:
+  create: true
+
+podSecurityPolicy:
+  enabled: false
+
+serviceAccounts:
+  server:
+    create: true
+    name: ""
+
+configmapReload:
+  prometheus:
+    enabled: true
+    server:
+      remoteWrite:
+        - url: http://host.docker.internal:9009/api/v1/push
+    name: configmap-reload
+    image:
+      repository: quay.io/prometheus-operator/prometheus-config-reloader
+      tag: v0.82.0
+      pullPolicy: IfNotPresent
+    containerPort: 8080
+    containerPortName: metrics
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: metrics
+        scheme: HTTP
+      periodSeconds: 10
+      initialDelaySeconds: 2
+    readinessProbe:
+      httpGet:
+        path: /healthz
+        port: metrics
+        scheme: HTTP
+      periodSeconds: 10
+
+server:
+  remoteWrite:
+    - url: http://host.docker.internal:9009/api/v1/push
+      
+  global:
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    evaluation_interval: 15s
+
+  name: server
+  image:
+    repository: quay.io/prometheus/prometheus
+    pullPolicy: IfNotPresent
+
+  extraFlags:
+    - web.enable-lifecycle
+
+  configPath: /etc/config/prometheus.yml
+  retention: "15d"
+  persistentVolume:
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+    mountPath: /data
+
+  service:
+    enabled: true
+    servicePort: 80
+    type: ClusterIP
+
+  resources: {}
+
+  securityContext:
+    runAsUser: 65534
+    runAsNonRoot: true
+    runAsGroup: 65534
+    fsGroup: 65534
+
+  readinessProbeInitialDelay: 30
+  readinessProbePeriodSeconds: 5
+  readinessProbeTimeout: 4
+  readinessProbeFailureThreshold: 3
+  livenessProbeInitialDelay: 30
+  livenessProbePeriodSeconds: 15
+  livenessProbeTimeout: 10
+  livenessProbeFailureThreshold: 3
+
+serverFiles:
+  prometheus.yml:
+    rule_files:
+      - /etc/config/recording_rules.yml
+      - /etc/config/alerting_rules.yml
+    scrape_configs:
+      - job_name: prometheus
+        static_configs:
+          - targets: ['localhost:9090']
+      - job_name: 'telegraf'
+        metrics_path: '/metrics'
+        static_configs:
+          - targets: ['host.docker.internal:9273']
+      - job_name: 'nodeexporter'
+        metrics_path: '/metrics'
+        static_configs:
+          - targets: ['host.docker.internal:9100']
+      - job_name: 'prometheusotelexporter'
+        scrape_interval: 15s
+        static_configs:
+          - targets: ['my-otel-collector-opentelemetry-collector.default.svc.cluster.local:8889']
+
+alertmanager:
+  enabled: true
+  persistence:
+    size: 2Gi
+  podSecurityContext:
+    runAsUser: 65534
+    runAsNonRoot: true
+    runAsGroup: 65534
+    fsGroup: 65534
+
+kube-state-metrics:
+  enabled: true
+
+prometheus-node-exporter:
+  enabled: true
+  rbac:
+    pspEnabled: false
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+
+prometheus-pushgateway:
+  enabled: true
+  serviceAnnotations:
+    prometheus.io/probe: pushgateway
