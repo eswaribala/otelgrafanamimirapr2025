@@ -406,5 +406,4 @@ kubectl patch -n prometheus ds prometheus-prometheus-node-exporter --type "json"
 #create prometheus data source
 #add the url as
 http://host.docker.internal:9009/prometheus
-https://hooks.slack.com/services/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
- 
+
