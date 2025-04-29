@@ -355,5 +355,35 @@ kubectl port-forward svc/mimir-distributed-nginx 9009:80
 curl http://localhost:9009/prometheus/api/v1/status/buildinfo
 kubectl port-forward svc/mimir-distributed-query-frontend 9010:8080
 helm get values mimir-distributed
+#prometheus and mimir-nginx integration
+#open prometheus configuration values.yaml file
+#go to configmapReload section
+#find prometheus: and enabled true
+#below that add the following
+prometheus:
+    enabled: true
+    server:
+      remoteWrite:
+        - url: http://host.docker.internal:9009/api/v1/push
+    name: configmap-reload
+    image:
+      repository: quay.io/prometheus-operator/prometheus-config-reloader
+      tag: v0.82.0
+      pullPolicy: IfNotPresent
+    containerPort: 8080
+    containerPortName: metrics
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: metrics
+        scheme: HTTP
+      periodSeconds: 10
+      initialDelaySeconds: 2
+    readinessProbe:
+      httpGet:
+        path: /healthz
+        port: metrics
+        scheme: HTTP
+      periodSeconds: 10
 
 
