@@ -20,6 +20,8 @@ helm repo list
 #Add repository
 helm repo add bitnami https://charts.bitnami.com/bitnami
 
+
+
 #prometheus installation
 
 Step 1: Add the Prometheus Helm Chart Repository
@@ -399,3 +401,8 @@ remoteWrite:
 helm upgrade prometheus prometheus-community/prometheus -f values.yaml -n prometheus
 #if node exporter pod fails, run the patch
 kubectl patch -n prometheus ds prometheus-prometheus-node-exporter --type "json" -p "[{"op": "remove", "path" : "/spec/template/spec/containers/0/volumeMounts/2/mountPropagation"}]"
+
+#mimr ngnix and grafana integration
+#create prometheus data source
+#add the url as
+http://host.docker.internal:9009/prometheus
