@@ -386,4 +386,16 @@ prometheus:
         scheme: HTTP
       periodSeconds: 10
 
+#find server: section
+#write the following
+remoteWrite:
+    - url: http://host.docker.internal:9009/api/v1/push
+      
+  global:
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    evaluation_interval: 15s
 
+helm upgrade prometheus prometheus-community/prometheus -f values.yaml -n prometheus
+#if node exporter pod fails, run the patch
+kubectl patch -n prometheus ds prometheus-prometheus-node-exporter --type "json" -p "[{"op": "remove", "path" : "/spec/template/spec/containers/0/volumeMounts/2/mountPropagation"}]"
