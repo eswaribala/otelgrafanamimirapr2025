@@ -1,0 +1,10 @@
+option task = {name: "test", every: 1m}
+
+// Data source
+from(bucket: "training")
+    |> range(start: -30m)
+    |> filter(fn: (r) => r._measurement == "cpu")
+    // Data processing
+    |> aggregateWindow(every: 5m, fn: mean)
+    // Data destination
+    |> to(bucket: "example-downsampled")
