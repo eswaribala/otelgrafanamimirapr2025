@@ -8,3 +8,9 @@ from(bucket: "training")
     |> aggregateWindow(every: 5m, fn: mean)
     // Data destination
     |> to(bucket: "example-downsampled")
+===================================
+from(bucket: "training")
+  |> range(start: -30m)
+  |> filter(fn: (r) => r["_measurement"] == "disk")
+  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+  |> to(bucket: "diskused-aggregation")
